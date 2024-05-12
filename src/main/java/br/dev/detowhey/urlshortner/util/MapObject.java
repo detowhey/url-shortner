@@ -14,7 +14,7 @@ public class MapObject {
         return instance == null ? instance = new MapObject() : instance;
     }
 
-    public  <T> T convertToType(Object source, Class<T> resultClass) {
-        return modelMapper.map(source,resultClass);
+    public <T> T convertToType(Object source, Class<T> resultClass) {
+        return modelMapper.map(source, resultClass);
     }
 }
