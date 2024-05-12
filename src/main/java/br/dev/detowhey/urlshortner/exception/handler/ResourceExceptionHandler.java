@@ -1,5 +1,6 @@
 package br.dev.detowhey.urlshortner.exception.handler;
 
+import br.dev.detowhey.urlshortner.exception.DataBaseConnectionException;
 import br.dev.detowhey.urlshortner.exception.NotFoundException;
 import br.dev.detowhey.urlshortner.exception.error.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +21,7 @@ public class ResourceExceptionHandler {
         return createErrorResponse("Not Found URL", HttpStatus.NOT_FOUND, e, request);
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(DataBaseConnectionException.class)
     public ResponseEntity<StandardError> dataBaseConnectionError(NotFoundException e, HttpServletRequest request) {
         return createErrorResponse("Database connection", HttpStatus.INTERNAL_SERVER_ERROR, e, request);
     }
