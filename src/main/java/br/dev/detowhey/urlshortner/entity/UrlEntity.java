@@ -17,7 +17,8 @@ public class UrlEntity {
 
     @Id
     private String id;
-    private String fullUrl;
+    private String url;
+    private String shortenerUrl;
     @Indexed(expireAfterSeconds = 0)
     private LocalDateTime localDateTime;
 }

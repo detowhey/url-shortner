@@ -5,6 +5,7 @@ import br.dev.detowhey.urlshortner.dto.response.ShortenerUrlResponseDTO;
 import br.dev.detowhey.urlshortner.entity.UrlEntity;
 import br.dev.detowhey.urlshortner.service.UrlService;
 import br.dev.detowhey.urlshortner.util.MapObject;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,7 +29,11 @@ public class UrlShortenerController {
     }
 
     @PostMapping
-    public ResponseEntity<ShortenerUrlResponseDTO> createShortenerUrl(@Validated @RequestBody ShortenerUrlRequestDTO shortenerUrlRequestDTO) {
+    public ResponseEntity<ShortenerUrlResponseDTO> createShortenerUrl(
+            @Validated
+            @RequestBody
+            ShortenerUrlRequestDTO shortenerUrlRequestDTO,
+            HttpServletRequest servletRequest) {
         UrlEntity urlEntityRequest = mapObject.convertToType(shortenerUrlRequestDTO, UrlEntity.class);
 
         URI uri = ServletUriComponentsBuilder
@@ -37,7 +42,7 @@ public class UrlShortenerController {
                 .buildAndExpand(urlEntityRequest.getId())
                 .toUri();
 
-        UrlEntity urlEntity = urlService.postCreateUrlShortener(urlEntityRequest);
+        UrlEntity urlEntity = urlService.postCreateUrlShortener(urlEntityRequest, servletRequest);
         ShortenerUrlResponseDTO urlShortenerResponse = mapObject.convertToType(urlEntity, ShortenerUrlResponseDTO.class);
         return ResponseEntity.created(uri).body(urlShortenerResponse);
     }
@@ -48,7 +53,7 @@ public class UrlShortenerController {
         var urlDto = mapObject.convertToType(url, ShortenerUrlResponseDTO.class);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create(url.getFullUrl()));
+        headers.setLocation(URI.create(url.getUrl()));
         return ResponseEntity.ok().headers(headers).body(urlDto);
     }
 }
