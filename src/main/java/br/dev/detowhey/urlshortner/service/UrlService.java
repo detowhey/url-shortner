@@ -20,7 +20,8 @@ import java.util.UUID;
 public class UrlService {
 
     private final UrlRepository urlRepository;
-    private static final String MESSAGE_ERROR = "This URL is already registered";
+    private static final String MESSAGE_ERROR_CONFLICT = "This URL is already registered";
+    private static final String MESSAGE_NOT_FOUND = "Not found URL object with ID: ";
 
     private final UrlMapper urlMapper;
 
@@ -33,10 +34,9 @@ public class UrlService {
 
     public UrlEntity postCreateUrlShortener(String url, HttpServletRequest servletRequest) {
         try {
-
             if (urlRepository.findByUrl(url).isPresent()) {
-                log.error(MESSAGE_ERROR);
-                throw new BusinessException(MESSAGE_ERROR);
+                log.error(MESSAGE_ERROR_CONFLICT);
+                throw new BusinessException(MESSAGE_ERROR_CONFLICT);
             }
 
             log.info("Create new short url");
@@ -60,7 +60,10 @@ public class UrlService {
         log.info("Searching URL with ID: {}", id);
 
         return urlRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Not found URL with ID: ", id));
+                .orElseThrow(() -> {
+                    log.error(MESSAGE_NOT_FOUND + "{}", id);
+                    return new NotFoundException(MESSAGE_NOT_FOUND, id);
+                });
     }
 
     public ShortenerUrlResponseDTO toDto(UrlEntity urlEntity) {
