@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: url-shortner
+  data:
+    mongodb:
+      authentication-database: admin
+      auto-index-creation: true
+      host: localhost
+      port: 27017
+      database: shortenerdb
+      username: admin
+      password: "123"

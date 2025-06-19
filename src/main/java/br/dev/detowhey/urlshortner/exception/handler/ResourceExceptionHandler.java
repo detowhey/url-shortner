@@ -1,11 +1,13 @@
 package br.dev.detowhey.urlshortner.exception.handler;
 
+import br.dev.detowhey.urlshortner.exception.BusinessException;
 import br.dev.detowhey.urlshortner.exception.DataBaseConnectionException;
 import br.dev.detowhey.urlshortner.exception.NotFoundException;
 import br.dev.detowhey.urlshortner.exception.error.ErrorObject;
 import br.dev.detowhey.urlshortner.exception.error.ErrorResponse;
 import br.dev.detowhey.urlshortner.exception.error.StandardError;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,8 +36,18 @@ public class ResourceExceptionHandler extends ResponseEntityExceptionHandler {
         return createErrorResponse("Database connection", HttpStatus.INTERNAL_SERVER_ERROR, e, request);
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<StandardError> businessExceptionHandler(BusinessException e, HttpServletRequest request) {
+        return createErrorResponse("URL already exist", HttpStatus.CONFLICT, e, request);
+    }
+
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            @NonNull MethodArgumentNotValidException ex,
+            @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status,
+            @NonNull WebRequest request
+    ) {
         List<ErrorObject> errorObjects = getErrors(ex);
         ErrorResponse errorResponse = getErrorResponse(ex, status, errorObjects);
         return new ResponseEntity<>(errorResponse, status);
